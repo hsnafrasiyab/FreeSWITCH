@@ -1,0 +1,82 @@
+Before Installation 
+https://freeswitch.org/confluence/display/FREESWITCH/Debian+Post-Install+Tasks
+
+# create user 'freeswitch'
+# add it to group 'freeswitch'
+# change owner and group of the freeswitch installation
+cd /usr/local
+groupadd freeswitch
+adduser --quiet --system --home /usr/local/freeswitch --gecos "FreeSWITCH open source softswitch" --ingroup freeswitch freeswitch --disabled-password
+chown -R freeswitch:freeswitch /usr/local/freeswitch/
+chmod -R ug=rwX,o= /usr/local/freeswitch/
+chmod -R u=rwx,g=rx /usr/local/freeswitch/bin/*
+
+# create freeswitch.service
+
+create freeswitch.service file in /etc/systemd/system 
+
+add this lines here(/etc/systemd/system)
+
+#
+; This file in installations built from Master can be found in
+; /usr/src/freeswitch/debian
+; edit as needed to match your needs
+ 
+[Unit]
+Description=freeswitch
+Wants=network-online.target
+Requires=network.target local-fs.target
+After=network.target network-online.target local-fs.target
+ 
+[Service]
+; service
+Type=forking
+PIDFile=/usr/local/freeswitch/run/freeswitch.pid
+; PermissionsStartOnly has been deprecated in favor of the ExecStart= and similar series, see:
+; https://github.com/NixOS/nixpkgs/issues/53852
+; PermissionsStartOnly=true
+; -nonat disables Network Address Translation probing at FreeSWITCH start, which might not be what you want!
+; blank ExecStart= line flushes the list
+ExecStart=
+ExecStart=/usr/local/freeswitch/bin/freeswitch -u freeswitch -g freeswitch -ncwait -nonat -rp
+TimeoutStartSec=45
+TimeoutStopSec=45
+; Restart=always will ALWAYS restart FreeSWITCH even when you wish to stop it to debug and configure it
+Restart=on-failure
+UMask=0007
+ 
+; exec
+WorkingDirectory=/usr/local/freeswitch/bin
+User=root
+Group=daemon
+LimitCORE=infinity
+LimitNOFILE=100000
+LimitNPROC=60000
+;LimitSTACK=240
+LimitRTPRIO=infinity
+LimitRTTIME=7000000
+IOSchedulingClass=realtime
+IOSchedulingPriority=2
+; See https://man7.org/linux/man-pages/man7/sched.7.html for scheduler settings that vary by O/S distribution
+; the following 2 lines are recommended for bare-metal machines
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=89
+; the following 3 lines were found by a user to work on a MacOS VM
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=1
+Nice=-19
+ 
+[Install]
+WantedBy=multi-user.target
+
+#
+
+systemctl daemon-reload
+
+systemctl enable freeswitch
+systemctl start freeswitch
+
+#
+ln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/
+ln -s /usr/local/freeswitch/bin/fs_cli /usr/bin
+#
