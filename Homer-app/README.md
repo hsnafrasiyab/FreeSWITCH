@@ -1,3 +1,4 @@
+# prerequisite packages
 apt-get install sqlite
 apt-get install fonts-urw-base35
 apt-get install unzip
@@ -38,7 +39,9 @@ echo "    static_configs:" >> /etc/prometheus/prometheus.yml
 echo "    - targets: [':::9096']" >> /etc/prometheus/prometheus.yml
 service prometheus restart
 
-# Installatio Grafana Serversudo apt-get install -y adduser libfontconfig1
+# Installation Grafana Server
+
+sudo apt-get install -y adduser libfontconfig1
 wget https://dl.grafana.com/enterprise/release/grafana-enterprise_7.2.2_amd64.deb
 sudo dpkg -i grafana-enterprise_7.2.2_amd64.deb
 
@@ -72,6 +75,7 @@ sed -i "s|ident\+|password|g" /etc/postgresql/12/main/pg_hba.conf
 systemctl restart postgresql
 
 # Installation of Heplify Server
+
 apt-get install libluajit-5.1-dev
 
 heplify-server installation
@@ -295,7 +299,7 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl start promtail.service
                                                   
-# Installation of Heplify server agent
+# Installation of Heplify  agent
                                                   
 apt update && apt upgrade -y && apt install sudo -y && apt install libpcap-dev -y
  wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz && tar -xvf $ go1.13.1.linux-amd64.tar.gz
@@ -342,8 +346,3 @@ Default Credentials for Homer7
     Username : admin
 
     Password : sipcapture
-
-
-
-
-
