@@ -1,0 +1,10 @@
+# how to create own wss.pem cert files?
+touch wss.pem
+cat domain.crt > wss.pem
+cat domain.key >> wss.pem
+cat domain.ca-bundle >> wss.pem
+# verify wss.pem
+openssl x509 -text -noout -in wss.pem
+ cp wss.pem /usr/local/freeswitch/certs/
+ chown freeswitch:freeswitch /usr/local/freeswitch/certs/wss.pem
+ systemctl restart freeswitch
